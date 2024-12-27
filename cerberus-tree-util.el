@@ -34,7 +34,7 @@
     (dolist (child (if backward (reverse children) children) return)
       (if (not return) (setq return (treesit-search-subtree child predicate backward all depth))))))
 
-(defun cerberus--node-eq (node1 node2)
+(defun cerberus--node-eq-p (node1 node2)
   (and (eq (treesit-node-start node1) (treesit-node-start node2))
        (eq (treesit-node-end node1) (treesit-node-end node2))))
 
@@ -64,7 +64,7 @@
     
     node))
 
-(defun cerberus--larger-parent (node)
+(defun cerberus--node-larger-parent (node)
   (let ((start (treesit-node-start node))
 	(end (treesit-node-end node)))
     
@@ -76,12 +76,12 @@
     (cerberus--same-size-parent node)
     ))
 
-(defun cerberus--smaller-child (node n &optional named)
+(defun cerberus--node-smaller-child (node n &optional named)
   (nth n (cerberus--node-smaller-children node named)))
 
 (defun cerberus--node-smaller-children (node &optional named)
   (if-let ((child (treesit-node-child node 0 named)))
-      (if (not (cerberus--node-eq node child))
+      (if (not (cerberus--node-eq-p node child))
 	  (treesit-node-children node named)
 	(cerberus--node-smaller-children child named))))
 

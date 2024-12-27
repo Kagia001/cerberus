@@ -23,29 +23,24 @@
 
 ;;; Code:
 
-(require 'cerberus-vars)
 (require 'cerberus-util)
 
-(setq cerberus--python-thing-settings
-      `((cerberus-statement
-	 ,(regexp-opt '("statement"
-			"comment")))
-	
-	(cerberus-nontrailing-list
-	 ,(regexp-opt '("argument_list"
-			"parameters"
-			"list"
-			"dictionary")))
-	
-	(cerberus-nontrailing-list-element
-	 ,(lambda (node) (cerberus--node-is-thing-p (treesit-node-parent node) 'cerberus-nontrailing-list)))))
+(cerberus-lang-def-things
+ 'python
+ `((cerberus-statement
+    ,(regexp-opt '("statement"
+		   "comment")))
+   
+   (cerberus-nontrailing-list
+    ,(regexp-opt '("argument_list"
+		   "parameters"
+		   "list"
+		   "dictionary")))
+   
+   (cerberus-nontrailing-list-element
+    ,(lambda (node) (cerberus--node-is-thing-p (treesit-node-parent node) 'cerberus-nontrailing-list)))))
 
 
-(defun cerberus--python-init ()
-  (defvar treesit-thing-settings nil)	; python-ts-mode doesn't define this yet
-  (cerberus--append-treesit-thing-settings 'python cerberus--python-thing-settings))
-
-(add-hook 'python-ts-mode-hook #'cerberus--python-init)
 
 (provide 'cerberus-python)
 

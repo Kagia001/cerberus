@@ -23,17 +23,17 @@
 
 ;;; Code:
 
-
+(require 'cerberus-vars)
+(require 'cerberus-core)
+(require 'cerberus-languages)
 (require 'cerberus-edit)
-(require 'cerberus-python)
-(require 'cerberus-c)
 (require 'cerberus-tree-util)
 (require 'cerberus-util)
 (require 'cerberus-interactive)
+
 (straight-use-package 'combobulate)
-
-
 (straight-use-package 'ryo-modal)
+
 (defun cerberus-normal-state ()
   (interactive)
   (ryo-modal-keys

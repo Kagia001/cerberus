@@ -42,17 +42,21 @@
 	  (goto-char (treesit-node-start outer))
 	  (activate-mark))))
 
-(defun cerberus--append-treesit-thing-settings (lang settings)
-  (if-let (old-settings (assq lang treesit-thing-settings))
-      (dolist (setting settings)
-	(unless (assq (car setting) old-settings)
-	  (push setting (cdr (assq lang treesit-thing-settings)))))
-    ;; (setcdr settings (cdr (assq lang treesit-thing-settings)))
-    (push `(,lang . ,settings) treesit-thing-settings)))
-;; (if (assq lang treesit-thing-settings)
-;;     (push settings (cdr (assq lang treesit-thing-settings)))
-;;   (push `(,lang . ,settings) treesit-thing-settings)))
+(defun cerberus-lang-def-things (lang definitions)
+  (let ((lang-settings (assq lang cerberus--thing-settings))
+	(other-settings (assq-delete-all lang cerberus--thing-settings)))
+    (dolist (definition definitions)
+      (setq lang-settings (cons definition (assq-delete-all (car definition) lang-settings))))
+    (setq cerberus--thing-settings (cons `(,lang . ,lang-settings) other-settings))))
 
-;; (setq-local treesit-thing-settings `((,lang . ,settings))))
+
+(defun cerberus--add-to-treesit-thing-settings (lang &optional default)
+  (let* ((new-settings (seq-find #'identity (list (cdr (assq lang cerberus--thing-settings)) default)))
+	 (merged-settings (append new-settings
+				(seq-remove (lambda (s) (member (car s) (mapcar #'car new-settings)))
+					    (cdr (assq lang treesit-thing-settings))))))
+    (setq treesit-thing-settings
+	  (cons (cons lang merged-settings)
+		(assq-delete-all lang treesit-thing-settings)))))
 
 (provide 'cerberus-util)

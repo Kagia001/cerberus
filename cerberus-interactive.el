@@ -33,13 +33,13 @@
 (defun cerberus-up ()
   (interactive)
   (if (use-region-p)
-      (cerberus--mark-node (cerberus--larger-parent (cerberus--node-at-point)))
+      (cerberus--mark-node (cerberus--node-larger-parent (cerberus--node-at-point)))
     (cerberus--mark-node (cerberus--node-at-point))))
 
 (defun cerberus-down ()
   (interactive)
   (if (use-region-p)
-      (cerberus--mark-node (cerberus--smaller-child (cerberus--node-at-point) 0 nil))
+      (cerberus--mark-node (cerberus--node-smaller-child (cerberus--node-at-point) 0 nil))
     (cerberus--mark-node (cerberus--node-at-point)))
   )
 

@@ -38,8 +38,36 @@
   (and (eq (treesit-node-start node1) (treesit-node-start node2))
        (eq (treesit-node-end node1) (treesit-node-end node2))))
 
+
 (defun cerberus--node-is-thing-p (node thing)
-  (treesit-node-eq node (treesit-search-subtree node thing nil t)))
+  "Check if NODE is thing THING. THING may also be a thing predicate."
+  ;; This was faster than (cerberus--node-eq-p node (treesit-search-subtree node thing))
+  (let ((eq-flag nil))
+    (dolist (node (cerberus--node-same-size-subtree node))
+      (let* ((lang (treesit-node-language node))
+	     (thing-definition (if (treesit-thing-defined-p thing lang) (treesit-thing-definition thing lang) thing)))
+	(setq eq-flag
+	      (or eq-flag
+		  (ignore-errors	; because undefined things get cared
+		    (cond ((functionp thing-definition)
+			   (thing-definition node))
+			  
+			  ((stringp thing-definition)
+			   (string-match-p thing-definition (treesit-node-type node)))
+			  
+			  ((and (stringp (car thing-definition))
+				(functionp (cdr thing-definition)))
+			   (and (cerberus--node-is-thing-p node (car thing-definition))
+				(cerberus--node-is-thing-p node (cdr thing-definition))))
+			  
+			  ((eq (car thing-definition) 'or)
+			   (apply #'or (mapcar (lambda (pred) (cerberus--node-is-thing-p node pred)) (cdr thing-definition))))
+			  
+			  ((eq (car thing-definition) 'not)
+			   (not (cerberus--node-is-thing-p node (cdr thing-definition)))))
+		    )))))
+    eq-flag))
+
 
 (defun cerberus--thing-no-subthing-p (node thing)
   (and (cerberus--node-is-thing-p node thing)
@@ -73,8 +101,11 @@
 		(treesit-node-parent node))
       (setq node (treesit-node-parent node)))
     
-    (cerberus--same-size-parent node)
-    ))
+    (cerberus--same-size-parent node)))
+
+(defun cerberus--node-same-size-subtree (node)
+  (let ((child (treesit-node-child node 0)))
+    (cons node (when (cerberus--node-eq-p child node) (cerberus--node-same-size-subtree child)))))
 
 (defun cerberus--node-smaller-child (node n &optional named)
   (nth n (cerberus--node-smaller-children node named)))

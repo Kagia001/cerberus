@@ -38,9 +38,22 @@
 		   "parameters"
 		   "list"
 		   "dictionary")))
-   
-   (cerberus-nontrailing-list-element
-    ,(lambda (node) (cerberus--node-is-thing-p (treesit-node-parent node) 'cerberus-nontrailing-list)))))
+   (cerberus-word
+    ,(lambda (node)
+       (and
+	;; Must not have (smaller) child nodes
+	(zerop (cerberus--node-smaller-child-count node t))
+	(or
+	 ;; And either be named (but not string start/end)
+	 (and (treesit-node-check node 'named)
+	      (not (treesit-query-capture node '([(string_start) (string_end)] @ignore))))
+	 ;; Or an operator
+	 (string-match (regexp-opt '("=" "+=" "-=" "*=" "/=" "%=" "//=" "**=" "&=" "/=" "^=" ">>=" "<<=" ":="
+				     "and" "not" "or" "is" "is not" "in" "not in"
+				     "&" "|" "^" "~" "<<" ">>"
+				     "==" ">=" "<=" "!=" ">" "<"
+				     "+" "-" "*" "/" "&" "**" "//"))
+		       (treesit-node-text node t))))))))
 
 
 

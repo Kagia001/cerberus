@@ -40,7 +40,10 @@
 				  (eq (line-end-position) (treesit-node-end node)))))))
 	(cerberus-word
 	 ,(lambda (node) (and (zerop (cerberus--node-smaller-child-count node t))
-			 (treesit-node-check node 'named))))))
+			 (treesit-node-check node 'named))))
+	
+	(cerberus-nontrailing-list-element
+	 ,(lambda (node) (cerberus--node-is-thing-p (treesit-node-parent node) 'cerberus-nontrailing-list)))))
 
 (defun cerberus--lang-init (lang)
   (defvar treesit-thing-settings nil)

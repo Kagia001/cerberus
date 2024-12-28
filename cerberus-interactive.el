@@ -57,42 +57,28 @@
     (cerberus--mark-node (cerberus--node-at-point)))
   )
 
-(defun cerburus-test-next-sentence ()
+(defun cerberus-sentence-next ()
   (interactive)
-  (cerberus--mark-node (treesit-navigate-thing (point) 1 'end 'sentence )))
+  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) 1 'cerberus-sentence)))
 
-(defun cerberus-select-next-leaf ()
+(defun cerberus-sentence-prev ()
   (interactive)
-  (cerberus--mark-node (cerberus--next-leaf (cerberus--node-at-point))))
+  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) -1 'cerberus-sentence)))
 
-(defun cerberus-select-prev-leaf ()
+(defun cerberus-word-next ()
   (interactive)
-  (cerberus--mark-node (cerberus--prev-leaf (cerberus--node-at-point))))
+  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) 1 'cerberus-word)))
 
-(defun cerberus-select-sexp-forward ()
+(defun cerberus-word-prev ()
   (interactive)
-  (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'sexp)))
-
-(defun cerberus-select-sexp-backward ()
-  (interactive)
-  (cerberus--mark-node (cerberus--bottom-level-thing-prev (cerberus--node-at-point) 'sexp)))
-
-(defun cerberus-select-statement-forward ()
-  (interactive)
-  ;; (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'cerberus-sentence))
-  (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'cerberus-sentence))
-  )
-
-(defun cerberus-select-statement-backward ()
-  (interactive)
-  (cerberus--mark-node (cerberus--bottom-level-thing-prev (cerberus--node-at-point) 'cerberus-sentence)))
+  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) -1 'cerberus-word)))
 
 (defun cerberus-delete ()
   (interactive)
   (if-let ((node (cerberus--node-in-region)))
-      (let ((next-selection (cond ((cerberus--only-child-p node t)
+      (let ((next-selection (cond ((cerberus--node-only-child-p node t)
 				   nil)
-				  ((cerberus--last-child-p node t)
+				  ((cerberus--node-last-child-p node t)
 				   (treesit-node-prev-sibling node t))
 				  (t
 				   (treesit-node-next-sibling node t)))))

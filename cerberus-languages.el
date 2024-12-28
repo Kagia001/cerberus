@@ -37,7 +37,10 @@
 				  (eq (+ (current-indentation) (line-beginning-position))
 				      (treesit-node-start node)))
 			   (progn (goto-char (treesit-node-end node))
-				  (eq (line-end-position) (treesit-node-end node)))))))))
+				  (eq (line-end-position) (treesit-node-end node)))))))
+	(cerberus-word
+	 ,(lambda (node) (and (zerop (cerberus--node-smaller-child-count node t))
+			 (treesit-node-check node 'named))))))
 
 (defun cerberus--lang-init (lang)
   (defvar treesit-thing-settings nil)

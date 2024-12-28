@@ -38,12 +38,12 @@
   (interactive)
   (ryo-modal-keys
    ("m" cerberus-up)
-   ("n" cerberus-select-statement-forward)
-   ("e" cerberus-select-statement-backward)
+   ("n" cerberus-sentence-next)
+   ("e" cerberus-sentence-prev)
    ("i" cerberus-down)
 
-   ("f" cerberus-select-next-leaf)
-   ("b" cerberus-select-prev-leaf)
+   ("f" cerberus-word-next)
+   ("b" cerberus-word-prev)
    ("l" cerberus-next)
    ("u" cerberus-prev)
 

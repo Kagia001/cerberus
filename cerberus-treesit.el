@@ -31,8 +31,8 @@
 
 (defun cerberus--node-at-point ()
   (cerberus--same-size-parent (if (use-region-p)
-				  (treesit-node-on (region-beginning) (region-end))
-				(treesit-node-at (point)))))
+			  (treesit-node-on (region-beginning) (region-end))
+			(treesit-node-at (point)))))
 
 (defun cerberus--node-in-region ()
   (when (use-region-p) (cerberus--same-size-parent (treesit-node-on (region-beginning) (region-end)))))
@@ -77,7 +77,7 @@
 	      (or eq-flag
 		  (ignore-errors	; because undefined things get cared
 		    (cond ((functionp thing-definition)
-			   (thing-definition node))
+			   (funcall thing-definition node))
 			  
 			  ((stringp thing-definition)
 			   (string-match-p thing-definition (treesit-node-type node)))
@@ -99,12 +99,6 @@
 (defun cerberus--thing-no-subthing-p (node thing)
   (and (cerberus--node-is-thing-p node thing)
        (not (cerberus--search-subtree-without-self node thing))))
-
-(defun cerberus--is-leaf-p (node)
-  (pcase (treesit-node-child-count node)
-    (0 t)
-    (1 (cerberus--is-leaf-p (treesit-node-child node 0)))))
-
 
 (defun cerberus--same-size-parent (node)
   (let ((start (treesit-node-start node))
@@ -134,14 +128,17 @@
   (let ((child (treesit-node-child node 0)))
     (cons node (when (cerberus--node-eq-p child node) (cerberus--node-same-size-subtree child)))))
 
-(defun cerberus--node-smaller-child (node n &optional named)
-  (nth n (cerberus--node-smaller-children node named)))
-
 (defun cerberus--node-smaller-children (node &optional named)
   (if-let ((child (treesit-node-child node 0 named)))
       (if (not (cerberus--node-eq-p node child))
 	  (treesit-node-children node named)
 	(cerberus--node-smaller-children child named))))
+
+(defun cerberus--node-smaller-child-count (node &optional named)
+  (length (cerberus--node-smaller-children node named)))
+
+(defun cerberus--node-smaller-child (node n &optional named)
+  (nth n (cerberus--node-smaller-children node named)))
 
 ;; (defun cerberus--node-next-peer (node)
 ;;   (let ((parent (treesit-node-parent node))
@@ -152,55 +149,47 @@
 ;;       (setq i (+ i 1)))
 
 ;;     (treesit-node-child parent (1+ (treesit-node-index node)))))
+
+(defun cerberus--node-search-fwd (node thing)
+  (let ((new-node node)
+	(stop-flag nil))
+    (while (not (or (null new-node)
+		    (and (cerberus--node-is-thing-p new-node thing)
+			 (not (cerberus--node-eq-p new-node node)))))
+      (setq new-node
+	    (seq-find
+	     #'identity
+	     (list (treesit-node-child new-node 0)
+		   (treesit-node-next-sibling new-node)
+		   (treesit-node-next-sibling (treesit-parent-until new-node (lambda (n) (when (treesit-node-next-sibling n)))))))))
+    new-node))
+
 (defun cerberus--node-navigate (node arg thing &optional tactic)
   "Navigate ARG THINGs using TACTIC
 TODO implement tactics
 we go back from starting point or fwd from end point and find the next matching thing"
-  (pcase arg
-    ('0
-     node)
-    ('1
-     ())
-    ('-1
-     (treesit-search-forward node thing t t))
-    (_
-     (cerberus--node-navigate ((cerberus--node-navigate node (cl-signum arg) thing tactic)
-			       (- arg (cl-signum arg))
-			       thing
-			       tactic)))))
-
-(defun cerberus--next-leaf (node)
-  (if (cerberus--is-leaf-p node)
-      (treesit-search-forward node #'cerberus--is-leaf-p nil)
-    (treesit-search-subtree node #'cerberus--is-leaf-p nil)))
-
-(defun cerberus--prev-leaf (node)
-  (if (cerberus--is-leaf-p node)
-      (treesit-search-forward node #'cerberus--is-leaf-p t)
-    (treesit-search-subtree node #'cerberus--is-leaf-p t)))
-
-(defun cerberus--bottom-level-thing-next (node thing)
-  (let ((search-p (lambda (n) (cerberus--thing-no-subthing-p n thing))))
-    (seq-find #'identity `(,(cerberus--search-subtree-without-self node search-p nil t)
-			   ,(treesit-search-forward node search-p nil t)))))
-
-(defun cerberus--bottom-level-thing-prev (node thing)
-  (treesit-search-forward node (lambda (n) (cerberus--thing-no-subthing-p n thing)) t t))
-
-(defun cerberus--thing-next (node thing)
-  (let ((search-p (lambda (n) (cerberus--thing-no-subthing-p n thing))))
-    (seq-find #'identity `(,(cerberus--search-subtree-without-self node search-p nil t)
-			   ,(treesit-search-forward node search-p nil t)))))
+  (if node
+      (pcase arg
+	('0 node)
+	('1
+	 (cerberus--node-search-fwd node thing))
+	('-1
+	 (treesit-search-forward node thing t t))
+	(_
+	 (cerberus--node-navigate ((cerberus--node-navigate node (cl-signum arg) thing tactic)
+			   (- arg (cl-signum arg))
+			   thing
+			   tactic))))))
 
 
-(defun cerberus--last-child-p (node &optional named)
+(defun cerberus--node-last-child-p (node &optional named)
   (eq (1+ (treesit-node-index node named)) (treesit-node-child-count (treesit-node-parent node) named)))
 (provide 'cerberus-tree-util)
 
-(defun cerberus--first-child-p (node &optional named)
+(defun cerberus--node-first-child-p (node &optional named)
   (eq 0 (treesit-node-index node named)))
 
-(defun cerberus--only-child-p (node &optional named)
+(defun cerberus--node-only-child-p (node &optional named)
   (eq 1 (treesit-node-child-count (treesit-node-parent node) named)))
 
 (provide 'cerberus-treesit)

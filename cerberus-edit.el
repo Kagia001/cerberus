@@ -27,7 +27,7 @@
 
 ;; (require 'combobulate)
 (require 'cerberus-util)
-(require 'cerberus-tree-util)
+(require 'cerberus-treesit)
 
 ;; (push '(c-ts-mode . c) tree-edit-language-alist)
 

@@ -26,7 +26,7 @@
 ;; Languages with specific definitions
 (require 'cerberus-c)
 (require 'cerberus-python)
-(require 'cerberus-tree-util)
+(require 'cerberus-treesit)
 
 
 ;; Defaults for other languages

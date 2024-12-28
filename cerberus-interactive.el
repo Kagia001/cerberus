@@ -26,7 +26,7 @@
 
 
 (require 'treesit)
-(require 'cerberus-tree-util)
+(require 'cerberus-treesit)
 (require 'cerberus-util)
 (require 'cerberus-edit)
 

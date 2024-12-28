@@ -27,7 +27,7 @@
 (require 'cerberus-core)
 (require 'cerberus-languages)
 (require 'cerberus-edit)
-(require 'cerberus-tree-util)
+(require 'cerberus-treesit)
 (require 'cerberus-util)
 (require 'cerberus-interactive)
 

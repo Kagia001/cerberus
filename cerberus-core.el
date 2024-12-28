@@ -20,7 +20,7 @@
   (let ((parsers (treesit-parser-list)))
     (if (eq 1 (length parsers))
 	(cerberus--lang-init (treesit-parser-language (car parsers)))
-      cerberus-fallback)))
+      (funcall cerberus-fallback))))
 
 (defun cerberus--stop ()
   (message "TODO"))

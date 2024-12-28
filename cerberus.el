@@ -34,6 +34,7 @@
 (straight-use-package 'combobulate)
 (straight-use-package 'ryo-modal)
 
+(setq cerberus-fallback #'meow-mode)
 (defun cerberus-normal-state ()
   (interactive)
   (ryo-modal-keys

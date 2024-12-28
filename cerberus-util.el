@@ -23,8 +23,33 @@
 
 ;;; Code:
 
+(defun cerberus--alist-put (alist key value)
+  ())
+
 (defun cerberus--one-closer-to-0 (n)
   (- n (cl-signum n)))
+
+(defun cerberus--alist-put (alist key value)
+  (cons (cons key value) (assq-delete-all key (copy-alist alist))))
+
+(defun cerberus--alist-get (alist key)
+  (cdr (assq key alist)))
+
+(defun cerberus--alist-member (alist key)
+  (member key (mapcar #'car alist)))
+
+(defun cerberus-lang-def-things (lang definitions)
+  (let ((new-defs (cerberus--alist-get cerberus--thing-definitions lang)))
+    (dolist (def definitions)
+      (setq new-defs (cerberus--alist-put new-defs (car def) (cdr def))))
+  (setq cerberus--thing-definitions
+	(cerberus--alist-put cerberus--thing-definitions lang new-defs))))
+
+;; (let ((lang-settings (cdr (assq lang cerberus--thing-definitions)))
+;;       (other-settings (assq-delete-all lang cerberus--thing-definitions)))
+;;   (dolist (definition definitions)
+;;     (setq lang-settings (cons definition (assq-delete-all (car definition) lang-settings))))
+;;   (setq cerberus--thing-definitions (cons `(,lang . ,lang-settings) other-settings))))
 
 (provide 'cerberus-util)
 

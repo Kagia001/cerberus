@@ -44,22 +44,16 @@
 	  (goto-char (treesit-node-start outer))
 	  (activate-mark))))
 
-(defun cerberus-lang-def-things (lang definitions)
-  (let ((lang-settings (assq lang cerberus--thing-settings))
-	(other-settings (assq-delete-all lang cerberus--thing-settings)))
-    (dolist (definition definitions)
-      (setq lang-settings (cons definition (assq-delete-all (car definition) lang-settings))))
-    (setq cerberus--thing-settings (cons `(,lang . ,lang-settings) other-settings))))
 
 
 (defun cerberus--add-to-treesit-thing-settings (lang &optional default)
-  (let* ((new-settings (seq-find #'identity (list (cdr (assq lang cerberus--thing-settings)) default)))
-	 (merged-settings (append new-settings
-				(seq-remove (lambda (s) (member (car s) (mapcar #'car new-settings)))
-					    (cdr (assq lang treesit-thing-settings))))))
+  (let* ((new-settings (cerberus--alist-get treesit-thing-settings lang)))
+    (dolist (settings (list default (cerberus--alist-get cerberus--thing-definitions lang)))
+      (dolist (setting settings)
+	(setq new-settings (cerberus--alist-put new-settings (car setting) (cdr setting)))))
+    
     (setq treesit-thing-settings
-	  (cons (cons lang merged-settings)
-		(assq-delete-all lang treesit-thing-settings)))))
+	  (cerberus--alist-put treesit-thing-settings lang new-settings))))
 
 (defun cerberus--search-subtree-without-self (node predicate &optional backward all depth)
   (let ((children (cerberus--node-smaller-children node (not all)))

@@ -29,6 +29,8 @@
  'python
  `((cerberus-sentence
     ,(regexp-opt '("statement"
+		   "definition"
+		   "clause"
 		   "comment")))
    
    (cerberus-nontrailing-list

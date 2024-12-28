@@ -27,7 +27,7 @@
 
 (cerberus-lang-def-things
  'python
- `((cerberus-statement
+ `((cerberus-sentence
     ,(regexp-opt '("statement"
 		   "comment")))
    

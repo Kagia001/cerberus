@@ -79,13 +79,13 @@
 
 (defun cerberus-select-statement-forward ()
   (interactive)
-  ;; (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'cerberus-statement))
-  (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'cerberus-statement))
+  ;; (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'cerberus-sentence))
+  (cerberus--mark-node (cerberus--bottom-level-thing-next (cerberus--node-at-point) 'cerberus-sentence))
   )
 
 (defun cerberus-select-statement-backward ()
   (interactive)
-  (cerberus--mark-node (cerberus--bottom-level-thing-prev (cerberus--node-at-point) 'cerberus-statement)))
+  (cerberus--mark-node (cerberus--bottom-level-thing-prev (cerberus--node-at-point) 'cerberus-sentence)))
 
 (defun cerberus-delete ()
   (interactive)

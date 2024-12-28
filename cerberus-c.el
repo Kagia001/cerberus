@@ -27,7 +27,7 @@
 
 (cerberus-lang-def-things
  'c
- `((cerberus-statement
+ `((cerberus-sentence
     ,(regexp-opt '("preproc"
 		   "declaration"
 		   ;; "specifier"

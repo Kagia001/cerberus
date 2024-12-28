@@ -31,7 +31,7 @@
 
 ;; Defaults for other languages
 (setq cerberus-default-thing-settings
-      `((cerberus-statement
+      `((cerberus-sentence
 	 ,(lambda (node) (save-mark-and-excursion
 		      (and (progn (goto-char (treesit-node-start node))
 				  (eq (+ (current-indentation) (line-beginning-position))

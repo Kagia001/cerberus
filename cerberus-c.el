@@ -1,6 +1,7 @@
 ;;; cerberus-c.el --- C support for Combobulate -*- lexical-binding: t; -*-
 
 ;; Author: Karl Ragnar Giese
+;; Created: 22. December 2024
 ;; Package-Requires: ((emacs "30"))
 ;; Version: 0.1
 ;;

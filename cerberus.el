@@ -1,6 +1,7 @@
 ;;; cerberus.el --- Structural editing for EMACS -*- lexical-binding: t; -*-
 
 ;; Author: Karl Ragnar Giese
+;; Created: 21. December 2024
 ;; Package-Requires: ((emacs "30"))
 ;; Version: 0.1
 ;;

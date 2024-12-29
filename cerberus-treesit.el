@@ -123,8 +123,9 @@
     (cerberus--same-size-parent node)))
 
 (defun cerberus--node-same-size-subtree (node)
-  (let ((child (treesit-node-child node 0)))
-    (cons node (when (cerberus--node-eq-p child node) (cerberus--node-same-size-subtree child)))))
+  (when node
+    (let ((child (treesit-node-child node 0)))
+      (cons node (when (cerberus--node-eq-p child node) (cerberus--node-same-size-subtree child))))))
 
 (defun cerberus--node-smaller-children (node &optional named)
   (if-let ((child (treesit-node-child node 0 named)))

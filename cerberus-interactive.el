@@ -74,6 +74,14 @@
   (interactive)
   (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) -1 'cerberus-word)))
 
+(defun cerberus-move-node-up ()
+  (interactive)
+  (cerberus--mark-node (cerberus--swap-nodes (cerberus--node-at-point) (treesit-node-prev-sibling (cerberus--node-at-point) t))))
+
+(defun cerberus-move-node-down ()
+  (interactive)
+  (cerberus--mark-node (cerberus--swap-nodes (cerberus--node-at-point) (treesit-node-next-sibling (cerberus--node-at-point) t))))
+
 (defun cerberus-delete ()
   (interactive)
   (if-let ((node (cerberus--node-in-region)))

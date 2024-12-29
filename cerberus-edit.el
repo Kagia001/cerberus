@@ -30,9 +30,37 @@
 (require 'cerberus-util)
 (require 'cerberus-treesit)
 
-;; (push '(c-ts-mode . c) tree-edit-language-alist)
+(defun cerberus--swap-nodes (a b)
+  "Swap nodes a and b. Return new a."
+  (when (and a b)
+    (let ((atext (treesit-node-text a t))
+	  (btext (treesit-node-text b t))
+	  (astart (treesit-node-start a)))
+      (setq b (cerberus--rm-track (treesit-node-start a)
+			  (treesit-node-end a)
+			  b))
+      (setq b (cerberus--insert-track astart btext b))
+      (cerberus--replace-track (treesit-node-start b) (treesit-node-end b) atext)
+      (treesit-node-on (treesit-node-start b) (+ (treesit-node-start b) (length atext))))))
 
-(defun cerberus--rm-track (start end track)
+(defun cerberus--replace-track (start end text &optional track)
+  (setq track (cerberus--rm-track start end track))
+  (setq track (cerberus--insert-track start text track))
+  track)
+
+(defun cerberus--insert-track (position text &optional track)
+  (save-mark-and-excursion
+    (let ((diff (length text))
+	  (tstart (treesit-node-start track))
+	  (tend (treesit-node-end track)))
+      (goto-char position)
+      (insert text)
+      (when track
+	(when (>= tstart position) (setq tstart (+ tstart diff)))
+	(when (>= tend position) (setq tend (+ tend diff)))
+	(treesit-node-on tstart tend)))))
+
+(defun cerberus--rm-track (start end &optional track)
   (let ((rmdiff (- end start))
 	(tstart (treesit-node-start track))
 	(tend (treesit-node-end track)))
@@ -41,35 +69,6 @@
       (when (>= tstart end) (setq tstart (- tstart rmdiff)))
       (when (>= tend end) (setq tend (- tend rmdiff)))
       (treesit-node-on tstart tend))))
-
-;; (defun cerberus--delete-node (node track)
-;;   (let ((track (cond ((cerberus--node-is-thing-p node 'cerberus-trailing-list-element)
-;; 		      ;; (list (treesit-node-start node)
-;; 		      ;;       (if (cerberus--node-last-child-p)))
-;; 		      (message "TODO trailing list"))
-;; 		     ((cerberus--node-is-thing-p node 'cerberus-nontrailing-list-element)
-;; 		      (cond ((cerberus--node-only-child-p node t)
-;; 			     (cerberus--rm-track (treesit-node-start node)
-;; 						 (treesit-node-end node)
-;; 						 track))
-;; 			    ((cerberus--node-last-child-p node t)
-;; 			     (cerberus--rm-track (treesit-node-start (treesit-node-prev-sibling node nil))
-;; 						 (treesit-node-end node)
-;; 						 track))
-;; 			    (t
-;; 			     (cerberus--rm-track (treesit-node-start node)
-;; 						 (treesit-node-start (treesit-node-next-sibling node t))
-;; 						 track))))
-
-;; 		     (t
-;; 		      (cerberus--rm-track (treesit-node-start node)
-;; 					  (treesit-node-end node)
-;; 					  track)))))
-
-;;     (if (s-match "^\s*$" (buffer-substring (point-at-bol) (point-at-eol)))
-;; 	(cerberus--rm-track (point-at-bol) (1+ (point-at-eol)) track)
-;;       track)))
-
 
 (defun cerberus--delete-node (node track)
   (cond ((cerberus--node-is-thing-p node 'cerberus-trailing-list-element)
@@ -89,11 +88,6 @@
 		(cerberus--rm-track (treesit-node-start node)
 			    (treesit-node-start (treesit-node-next-sibling node t))
 			    track))))))
-
-(defun cerberus--delete-nodes (nodes)
-  (save-excursion
-    (delete-region (apply #'min (mapcar #'treesit-node-start nodes))
-		   (apply #'max (mapcar #'treesit-node-end nodes)))))
 
 (defun cerberus--list-element-with-separator (node)
   (cond ((cerberus--node-is-thing-p node 'cerberus-nontrailing-list-element)

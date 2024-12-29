@@ -48,8 +48,8 @@
  ("k" cerberus-next)
  ("h" cerberus-prev)
  ("<right>" combobulate-envelop)
- ("<down>" combobulate-drag-down)
- ("<up>" combobulate-drag-up)
+ ("<down>" cerberus-move-node-down)
+ ("<up>" cerberus-move-node-up)
  ("<left>" combobulate-splice-parent))
 
 (provide 'cerberus)

@@ -32,7 +32,7 @@
 
 (defun cerberus--swap-nodes (a b)
   "Swap nodes a and b. Return new a."
-  (when (and a b)
+  (when (cerberus--node-swappable-p a b)
     (let ((atext (treesit-node-text a t))
 	  (btext (treesit-node-text b t))
 	  (astart (treesit-node-start a)))

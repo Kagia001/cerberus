@@ -28,11 +28,16 @@
 
 (cerberus-lang-def-things
  'python
- `((cerberus-sentence
-    ,(regexp-opt '("statement"
-		   "definition"
-		   "clause"
-		   "comment")))
+ `((cerberus-statement
+    ,(regexp-opt '("statement")))
+   (cerberus-comment
+    ,(regexp-opt '("comment")))
+   (cerberus-sentence
+    (or cerberus-statement
+	cerberus-comment
+	,(regexp-opt '("clause"
+		       "comment"
+		       "definition"))))
    
    (cerberus-nontrailing-list
     ,(regexp-opt '("argument_list"

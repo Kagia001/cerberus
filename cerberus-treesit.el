@@ -44,7 +44,25 @@
 	  (goto-char (treesit-node-start outer))
 	  (activate-mark))))
 
+(defun cerberus--node-match-p (a b)
+  "return matching nodes if nodes or same-size children are of the same type"
+  (cl-intersection (mapcar #'treesit-node-type (cerberus--node-same-size-subtree a))
+		   (mapcar #'treesit-node-type (cerberus--node-same-size-subtree b))))
 
+(defun cerberus--node-swappable-p (a b)
+  "Return t if treesit nodes A and B may be swapped.
+This is determined to be possible if
+they or same-size children either are of the same type or statements,
+or if they are siblings and one is a comment"
+  (or (cerberus--node-match-p a b)
+      (cl-every
+       (lambda (n) (cl-some
+	       (lambda (nn) (cerberus--node-is-thing-p nn 'cerberus-statement))
+	       (cerberus--node-same-size-subtree n)))
+       (list a b))
+      (and (cerberus--node-eq-p (treesit-node-parent a) (treesit-node-parent b))
+	   (cl-some (lambda (n) (cerberus--node-is-thing-p n 'cerberus-comment))
+		    (list a b)))))
 
 (defun cerberus--add-to-treesit-thing-settings (lang &optional default)
   (let* ((new-settings (cerberus--alist-get treesit-thing-settings lang)))

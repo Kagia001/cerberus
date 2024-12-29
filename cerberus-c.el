@@ -28,34 +28,42 @@
 
 (cerberus-lang-def-things
  'c
- `((cerberus-condition
+ `((cerberus-statement
+    ,(regexp-opt '("attributed_statement"
+		   "break_statement"
+		   "case_statement"
+		   "comment"
+		   "continue_statement"
+		   "do_statement"
+		   "declaration"
+		   "expression_statement"
+		   "for_statement"
+		   "goto_statement"
+		   "if_statement"
+		   "labeled_statement"
+		   "preproc_def"
+		   "preproc_include"
+		   "return_statement"
+		   "switch_statement"
+		   "while_statement")
+		 'symbols))
+   (cerberus-condition
     ,(lambda (node) (and (treesit-node-check node 'named)
 		    (equal "condition" (treesit-node-field-name (treesit-node-parent node))))))
+   (cerberus-comment
+    ,(regexp-opt '("comment")))
+   
    (cerberus-sentence
-    (,(regexp-opt '("attributed_statement"
-		    "break_statement"
-		    "case_statement"
-		    "comment"
-		    "continue_statement"
-		    "declaration"
-		    "do_statement"
-		    "else_clause"
-		    "expression_statement"
-		    "for_statement"
-		    "function_definition"
-		    "goto_statement"
-		    "if_statement"
-		    "labeled_statement"
-		    "preproc_def"
-		    "preproc_include"	; Mostly yanked from c-ts-mode
-		    "return_statement"
-		    "switch_statement"
-		    "while_statement")
-		  'symbols)
-     .
-     ;; Dont include [else if] if-statements
-     ,(lambda (node) (not (and (cerberus--node-is-thing-p (treesit-node-parent node) "^else_clause$")
-			  (cerberus--node-is-thing-p node "^if_statement$"))))))
+    (or cerberus-statement
+	cerberus-condition
+	cerberus-comment
+	(,(regexp-opt '("function_definition"
+			"else_clause")
+		      'symbols)
+	 .
+	 ;; Dont include [else if] if-statements
+	 ,(lambda (node) (not (and (cerberus--node-is-thing-p (treesit-node-parent node) "^else_clause$")
+			      (cerberus--node-is-thing-p node "^if_statement$")))))))
 
    (cerberus-word
     ,(lambda (node)
@@ -67,7 +75,7 @@
 	 (treesit-node-check node 'named)
 	 ;; an operator,
 	 (equal "operator" (treesit-node-field-name node))
-	 ;; or one of theese:
+	 ;; or one of these:
 	 (string-match (concat "\\`"
 			       (regexp-opt '("=" "*" "&" "struct"))
 			       "\\'")
@@ -75,10 +83,7 @@
    (cerberus-nontrailing-list
     ,(regexp-opt '("argument_list"
 		   "parameter_list"
-		   "initializer_list")))
-
-   (cerberus-nontrailing-list-element
-    ,(lambda (node) (cerberus--node-is-thing-p (treesit-node-parent node) 'cerberus-nontrailing-list)))))
+		   "initializer_list")))))
 
 (provide 'cerberus-c)
 

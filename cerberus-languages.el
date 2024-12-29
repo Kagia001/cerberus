@@ -32,7 +32,9 @@
 
 ;; Defaults for other languages
 (setq cerberus-default-thing-settings
-      `((cerberus-condition ,regexp-unmatchable)
+      `((cerberus-statement ,regexp-unmatchable) ; Statements must be swappable with eachother
+	(cerberus-condition ,regexp-unmatchable)
+	(cerberus-comment ,regexp-unmatchable)
 	(cerberus-sentence
 	 ,(lambda (node) (save-mark-and-excursion
 		      (and (progn (goto-char (treesit-node-start node))
@@ -40,8 +42,6 @@
 				      (treesit-node-start node)))
 			   (progn (goto-char (treesit-node-end node))
 				  (eq (line-end-position) (treesit-node-end node)))))))
-	(cerberus-sentence-or-condition
-	 (or cerberus-sentence cerberus-condition))
 	(cerberus-word
 	 ,(lambda (node) (and (zerop (cerberus--node-smaller-child-count node t))
 			 (treesit-node-check node 'named))))

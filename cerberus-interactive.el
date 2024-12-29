@@ -60,11 +60,11 @@
 
 (defun cerberus-sentence-next ()
   (interactive)
-  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) 1 'cerberus-sentence-or-condition)))
+  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) 1 'cerberus-sentence)))
 
 (defun cerberus-sentence-prev ()
   (interactive)
-  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) -1 'cerberus-sentence-or-condition)))
+  (cerberus--mark-node (cerberus--node-navigate (cerberus--node-at-point) -1 'cerberus-sentence)))
 
 (defun cerberus-word-next ()
   (interactive)

@@ -75,24 +75,23 @@
 	     (thing-definition (if (treesit-thing-defined-p thing lang) (treesit-thing-definition thing lang) thing)))
 	(setq eq-flag
 	      (or eq-flag
-		  (ignore-errors	; because undefined things get cared
-		    (cond ((functionp thing-definition)
-			   (funcall thing-definition node))
-			  
-			  ((stringp thing-definition)
-			   (string-match-p thing-definition (treesit-node-type node)))
-			  
-			  ((and (stringp (car thing-definition))
-				(functionp (cdr thing-definition)))
-			   (and (cerberus--node-is-thing-p node (car thing-definition))
-				(cerberus--node-is-thing-p node (cdr thing-definition))))
-			  
-			  ((eq (car thing-definition) 'or)
-			   (apply #'or (mapcar (lambda (pred) (cerberus--node-is-thing-p node pred)) (cdr thing-definition))))
-			  
-			  ((eq (car thing-definition) 'not)
-			   (not (cerberus--node-is-thing-p node (cdr thing-definition)))))
-		    )))))
+		  (cond ((functionp thing-definition)
+			 (funcall thing-definition node))
+			
+			((stringp thing-definition)
+			 (string-match-p thing-definition (treesit-node-type node)))
+			
+			((ignore-errors (and (stringp (car thing-definition))
+					     (functionp (cdr thing-definition))))
+			 (and (cerberus--node-is-thing-p node (car thing-definition))
+			      (cerberus--node-is-thing-p node (cdr thing-definition))))
+			
+			((ignore-errors (eq (car thing-definition) 'or))
+			 (cl-some (lambda (pred) (cerberus--node-is-thing-p node pred)) (cdr thing-definition)))
+			
+			((ignore-errors (eq (car thing-definition) 'not))
+			 (not (cerberus--node-is-thing-p node (cdr thing-definition)))))
+		  ))))
     eq-flag))
 
 

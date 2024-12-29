@@ -35,20 +35,25 @@
   :init nil
   :group cerberus
   (if cerberus-mode
-      (cerberus--stop)
-    (cerberus--start))
+      (cerberus--start)
+    (cerberus--stop))
   )
 
 
-(define-globalized-minor-mode cerberus-global-mode cerberus-mode  cerberus--start)
+(define-globalized-minor-mode cerberus-global-mode cerberus-mode (lambda () (cerberus-mode 1))
+  :group 'cerberus
+  (if cerberus-mode (cerberus--start)
+    (cerberus--stop))
+  )
 
 (defun cerberus--start ()
   (let ((parsers (treesit-parser-list)))
     (if (eq 1 (length parsers))
-	(cerberus--lang-init (treesit-parser-language (car parsers)))
+	(progn (cerberus--lang-init (treesit-parser-language (car parsers)))
+	       (ryo-modal-mode 1))
       (funcall cerberus-fallback))))
 
 (defun cerberus--stop ()
-  (message "TODO"))
+  (ryo-modal-mode -1))
 
 (provide 'cerberus-core)

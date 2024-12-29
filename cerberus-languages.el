@@ -32,7 +32,7 @@
 
 ;; Defaults for other languages
 (setq cerberus-default-thing-settings
-      `((cerberus-condition "")
+      `((cerberus-condition ,regexp-unmatchable)
 	(cerberus-sentence
 	 ,(lambda (node) (save-mark-and-excursion
 		      (and (progn (goto-char (treesit-node-start node))

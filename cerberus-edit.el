@@ -75,18 +75,20 @@
   (cond ((cerberus--node-is-thing-p node 'cerberus-trailing-list-element)
 	 (message "TODO trailing list"))
 	(t
-	 (cond ((cerberus--node-only-child-p node t)
-		(cerberus--rm-track (treesit-node-end (treesit-node-prev-sibling node nil))
-				    (treesit-node-end node)
-				    track))
+	 (cond ((or (cerberus--node-only-child-p node t)
+		    (treesit-node-field-name node))
+		(cerberus--rm-track (seq-find #'identity (list (treesit-node-end (treesit-node-prev-sibling node nil))
+						       (treesit-node-start node)))
+			    (treesit-node-end node)
+			    track))
 	       ((cerberus--node-last-child-p node t)
 		(cerberus--rm-track (treesit-node-end (treesit-node-prev-sibling node t))
-				    (treesit-node-end node)
-				    track))
+			    (treesit-node-end node)
+			    track))
 	       (t
 		(cerberus--rm-track (treesit-node-start node)
-				    (treesit-node-start (treesit-node-next-sibling node t))
-				    track))))))
+			    (treesit-node-start (treesit-node-next-sibling node t))
+			    track))))))
 
 (defun cerberus--delete-nodes (nodes)
   (save-excursion

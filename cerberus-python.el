@@ -49,7 +49,7 @@
 	 (and (treesit-node-check node 'named)
 	      (not (treesit-query-capture node '([(string_start) (string_end)] @ignore))))
 	 ;; Or an operator
-	 (string-match (regexp-opt '("=" "+=" "-=" "*=" "/=" "%=" "//=" "**=" "&=" "/=" "^=" ">>=" "<<=" ":="
+	 (string-match (regexp-opt '("=" "+=" "-=" "*=" "/=" "%=" "//=" "**=" "&=" "|=" "^=" ">>=" "<<=" ":="
 				     "and" "not" "or" "is" "is not" "in" "not in"
 				     "&" "|" "^" "~" "<<" ">>"
 				     "==" ">=" "<=" "!=" ">" "<"

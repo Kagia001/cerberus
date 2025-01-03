@@ -24,13 +24,21 @@
 
 ;;; Code:
 
-(defun cerberus--alist-put (alist key value)
-  ())
+;; (defun cerberus--disable-states-except (state)
+;;   " c")
+
+(defun cerberus--major-mode-p (symbol)
+  "Return t if symbol is a major-mode function"
+  (and (fboundp symbol)
+       (string-suffix-p "-mode" (symbol-name symbol))))
 
 (defun cerberus--one-closer-to-0 (n)
   (- n (cl-signum n)))
 
 (defun cerberus--alist-put (alist key value)
+  "Add to ALIST the (KEY . VALUE) pair.
+
+If any entries with KEY allready exist, delete them first."
   (cons (cons key value) (assq-delete-all key (copy-alist alist))))
 
 (defun cerberus--alist-get (alist key)

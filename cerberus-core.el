@@ -34,24 +34,37 @@
   "Structural editing"
   :init nil
   :group cerberus
+  ;; :keymap cerberus-mode-normal-map
   (if cerberus-mode
       (cerberus--start)
-    (cerberus--stop))
-  )
+    (cerberus--stop)))
 
-
-(define-globalized-minor-mode cerberus-global-mode cerberus-mode (lambda () (cerberus-mode 1))
+(define-globalized-minor-mode cerberus-global-mode cerberus-mode (lambda () (unless (minibufferp) (cerberus-mode 1)))
   :group 'cerberus
   (if cerberus-mode (cerberus--start)
-    (cerberus--stop))
-  )
+    (cerberus--stop)))
+
+(define-minor-mode cerberus-normal-mode
+  "Cerberus' normal mode"
+  :group cerberus
+  :lighter "[N]"
+  (when (and cerberus-normal-mode cerberus-insert-mode) (cerberus-insert-mode -1)))
+
+(define-minor-mode cerberus-insert-mode
+  "Cerberus' insert mode"
+  :group cerberus
+  :lighter "[I]"
+  (when (and cerberus-normal-mode cerberus-insert-mode) (cerberus-normal-mode -1)))
 
 (defun cerberus--start ()
+  (add-to-list 'emulation-mode-map-alists 'cerberus--keymap-alist)
+  (cerberus-normal-mode) 
   (let ((parsers (treesit-parser-list)))
     (if (eq 1 (length parsers))
-	(progn (cerberus--lang-init (treesit-parser-language (car parsers)))
-	       (ryo-modal-mode 1))
-      (funcall cerberus-fallback))))
+	(progn (cerberus--treesit-init (treesit-parser-language (car parsers)))
+	      )
+      ;; (funcall cerberus-fallback)
+      )))
 
 (defun cerberus--stop ()
   (ryo-modal-mode -1))

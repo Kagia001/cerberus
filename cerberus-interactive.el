@@ -31,6 +31,13 @@
 (require 'cerberus-util)
 (require 'cerberus-edit)
 
+(defun cerberus-mark-line ()
+  (interactive)
+  (beginning-of-line)
+  (set-mark (1- (point)))
+  (end-of-line))
+
+
 (defun cerberus-up ()
   (interactive)
   (if (use-region-p)
@@ -82,6 +89,11 @@
   (interactive)
   (cerberus--mark-node (cerberus--swap-nodes (cerberus--node-at-point) (treesit-node-next-sibling (cerberus--node-at-point) t))))
 
+(defun cerberus-insert ()
+  (interactive)
+  (call-interactively #'delete-region)
+  (ryo-modal-mode -1))
+
 (defun cerberus-delete ()
   (interactive)
   (if-let ((node (cerberus--node-in-region)))
@@ -94,4 +106,9 @@
 				   (treesit-node-next-sibling node t)))))
 	(message "%s" next-selection)
 	(cerberus--mark-node (cerberus--delete-node node next-selection)))))
+
+(defun cerberus-change ()
+  (interactive)
+  (call-interactively #'kill-region)
+  (call-interactively #'cerberus-insert-mode))
 (provide 'cerberus-interactive)

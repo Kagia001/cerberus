@@ -26,6 +26,9 @@
 
 (defvar cerberus--thing-definitions nil "Thing settings for treesit things. See `treesit-thing-settings' for format")
 
+(defvar cerberus--major-mode-keymaps
+  "Keymaps overriding default keymaps ")
+
 (defvar-keymap cerberus-default-normal-keymap
   :doc "Keymap for Cerberus' normal state"
 
@@ -33,7 +36,7 @@
   "w" #'meow-mark-symbol
   "f" #'meow-next-symbol
   "p" #'yank
-  "b" #'meow-prev-symbol
+  "b" #'meow-back-symbol
   "j" #'meow-join
   "l" #'meow-line
   "u" #'undo
@@ -67,9 +70,9 @@
   "." #'ignore
   "-" #'ignore
 
-  "TAB" #'ignore
-  "RET" #'ignore
-  "ESC" #'keyboard-quit
+  "<tab>" #'ignore
+  "<return>" #'ignore
+  "<escape>" #'keyboard-quit
   "SPC" #'hydra-leader/body)
 
 (defvar-keymap cerberus-default-insert-keymap
@@ -89,9 +92,14 @@
   "b" #'cerberus-word-prev)
 
 
-(defvar cerberus--keymap-alist `((cerberus-normal-mode . ,cerberus-default-normal-keymap)
+(defvar cerberus--default-keymaps `((cerberus-normal-mode . ,cerberus-default-normal-keymap)
 			(cerberus-insert-mode . ,cerberus-default-insert-keymap))
   "Keymap alist for Cerberus which is added to emulation-mode-map-alists.")
-(make-variable-buffer-local 'cerberus--keymap-alist)
+
+(defvar cerberus--treesit-override-keymaps nil)
+(make-variable-buffer-local 'cerberus--treesit-override-keymaps)
+
+(defvar cerberus--user-override-keymaps nil)
+(make-variable-buffer-local 'cerberus--user-override-keymaps)
 
 (provide 'cerberus-vars)

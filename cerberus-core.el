@@ -1,4 +1,4 @@
-;;; cerberus-core.el --- Combobulate mode definition -*- lexical-binding: t; -*-
+;; cerberus-core.el --- Combobulate mode definition -*- lexical-binding: t; -*-
 
 ;; Author: Karl Ragnar Giese
 ;; Created: 26. December 2024
@@ -57,16 +57,20 @@
   (when (and cerberus-normal-mode cerberus-insert-mode) (cerberus-normal-mode -1)))
 
 (defun cerberus--start ()
-  (add-to-list 'emulation-mode-map-alists 'cerberus--keymap-alist)
+  (dolist (element '(cerberus--default-keymaps
+		     cerberus--treesit-override-keymaps
+		     cerberus--user-override-keymaps))
+    (add-to-list 'emulation-mode-map-alists element))
+
   (cerberus-normal-mode) 
   (let ((parsers (treesit-parser-list)))
     (if (eq 1 (length parsers))
-	(progn (cerberus--treesit-init (treesit-parser-language (car parsers)))
-	      )
-      ;; (funcall cerberus-fallback)
-      )))
+	(progn (cerberus--treesit-init (treesit-parser-language (car parsers)))))))
 
 (defun cerberus--stop ()
-  (ryo-modal-mode -1))
+  (dolist (element '(cerberus--default-keymaps cerberus--treesit-override-keymaps cerberus--user-override-keymaps))
+    (setq emulation-mode-map-alists (delete element emulation-mode-map-alists))))
+
+;; (defun cerberus-language-define-keys)
 
 (provide 'cerberus-core)

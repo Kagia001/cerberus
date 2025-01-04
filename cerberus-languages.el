@@ -51,8 +51,8 @@
 
 (defun cerberus--treesit-init (lang)
   (defvar treesit-thing-settings nil)
-  (setq cerberus--keymap-alist `((cerberus-normal-mode . ,cerberus-ts-normal-keymap)
-			 (cerberus-insert-mode . ,cerberus-default-insert-keymap)))
+  (setq cerberus--treesit-override-keymaps `((cerberus-normal-mode . ,cerberus-ts-normal-keymap)
+				     (cerberus-insert-mode . ,cerberus-default-insert-keymap)))
   (cerberus--add-to-treesit-thing-settings lang cerberus-default-thing-settings))
 
 

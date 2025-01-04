@@ -83,13 +83,20 @@
 (defvar-keymap cerberus-ts-normal-keymap
   :doc "Keymap for Cerberus' normal mode when treesit is active"
   :parent cerberus-default-normal-keymap
+  
   "m" #'cerberus-up
   "n" #'cerberus-sentence-next
   "e" #'cerberus-sentence-prev
   "i" #'cerberus-down
 
   "f" #'cerberus-word-next
-  "b" #'cerberus-word-prev)
+  "b" #'cerberus-word-prev
+
+  "k" #'cerberus-next
+  "h" #'cerberus-prev
+
+  "<up>" #'cerberus-move-node-up
+  "<down>" #'cerberus-move-node-down)
 
 
 (defvar cerberus--default-keymaps `((cerberus-normal-mode . ,cerberus-default-normal-keymap)
@@ -101,5 +108,7 @@
 
 (defvar cerberus--user-override-keymaps nil)
 (make-variable-buffer-local 'cerberus--user-override-keymaps)
+
+
 
 (provide 'cerberus-vars)

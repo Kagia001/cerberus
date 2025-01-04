@@ -56,9 +56,7 @@ they or same-size children either are of the same type or statements,
 or if they are siblings and one is a comment"
   (or (cerberus--node-match-p a b)
       (cl-every
-       (lambda (n) (cl-some
-	       (lambda (nn) (cerberus--node-is-thing-p nn 'cerberus-statement))
-	       (cerberus--node-same-size-subtree n)))
+       (lambda (n) (cerberus--node-is-thing-p n 'cerberus-statement))
        (list a b))
       (and (cerberus--node-eq-p (treesit-node-parent a) (treesit-node-parent b))
 	   (cl-some (lambda (n) (cerberus--node-is-thing-p n 'cerberus-comment))

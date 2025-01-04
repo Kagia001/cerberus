@@ -35,23 +35,4 @@
 (straight-use-package 'meow)
 (straight-use-package 'combobulate)
 
-
-;; (setq cerberus-fallback #'meow-mode)
-;; (ryo-modal-keys
-;;  ("f" cerberus-word-next)
-;;  ("b" cerberus-word-prev)
-;;  ("u" undo)
-;;  ("m" cerberus-up)
-;;  ("n" cerberus-sentence-next)
-;;  ("e" cerberus-sentence-prev)
-;;  ("i" cerberus-down)
-;;  ("c" cerberus-insert)
-;;  ("d" cerberus-delete)
-;;  ("k" cerberus-next)
-;;  ("h" cerberus-prev)
-;;  ("<right>" combobulate-envelop)
-;;  ("<down>" cerberus-move-node-down)
-;;  ("<up>" cerberus-move-node-up)
-;;  ("<left>" combobulate-splice-parent))
-
 (provide 'cerberus)

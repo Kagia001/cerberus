@@ -48,6 +48,7 @@
   :group cerberus
   :lighter "[N]"
   (when cerberus-normal-mode
+    (setq cursor-type 'hollow)
     (dolist (mode '(cerberus-insert-mode cerberus-motion-mode))
       (funcall mode -1))))
 
@@ -56,6 +57,7 @@
   :group cerberus
   :lighter "[I]"
   (when cerberus-insert-mode
+    (setq cursor-type 'bar)
     (dolist (mode '(cerberus-normal-mode cerberus-motion-mode))
       (funcall mode -1))))
 
@@ -64,6 +66,7 @@
   :group cerberus
   :lighter "[M]"
   (when cerberus-motion-mode
+    (setq cursor-type 'box)
     (dolist (mode '(cerberus-normal-mode cerberus-insert-mode))
       (funcall mode -1))))
 

@@ -45,10 +45,11 @@
   "'" #'ignore
   "~" #'ignore
   
-  "a" #'ignore
+  "a" #'cerberus-insert
   "r" #'meow-replace
   "s" #'ignore
-  "t" #'cerberus-insert-mode
+  "t" #'cerberus-append
+  "T" #'cerberus-open-below
   "g" #'ignore
   "m" #'backward-char
   "n" #'next-line

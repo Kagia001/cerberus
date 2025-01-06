@@ -91,8 +91,23 @@
 
 (defun cerberus-insert ()
   (interactive)
-  (call-interactively #'delete-region)
-  (ryo-modal-mode -1))
+  (when (use-region-p)
+    (when (> (point) (mark)) (exchange-point-and-mark))
+    (deactivate-mark))
+  (cerberus-insert-mode))
+
+(defun cerberus-append ()
+  (interactive)
+  (when (use-region-p)
+    (when (< (point) (mark)) (exchange-point-and-mark))
+    (deactivate-mark))
+  (cerberus-insert))
+
+(defun cerberus-open-below ()
+  (interactive)
+  (cerberus-append)
+  (newline nil t)
+  ())
 
 (defun cerberus-delete ()
   (interactive)

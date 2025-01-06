@@ -106,7 +106,7 @@ or if they are siblings and one is a comment"
 			 (cl-some (lambda (pred) (cerberus--node-is-thing-p node pred)) (cdr thing-definition)))
 			
 			((ignore-errors (eq (car thing-definition) 'not))
-			 (not (cerberus--node-is-thing-p node (cdr thing-definition)))))))))
+			 (not (cerberus--node-is-thing-p node (cadr thing-definition)))))))))
     eq-flag))
 
 

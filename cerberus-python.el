@@ -35,7 +35,9 @@
    (cerberus-sentence
     (or cerberus-statement
 	cerberus-comment
-	,(regexp-opt '("clause"
+	cerberus-condition
+	,(regexp-opt '("else_clause"
+		       "except_clause"
 		       "comment"
 		       "definition"))))
    
@@ -53,13 +55,15 @@
 	 ;; And either be named (but not string start/end)
 	 (and (treesit-node-check node 'named)
 	      (not (treesit-query-capture node '([(string_start) (string_end)] @ignore))))
-	 ;; Or an operator
-	 (string-match (regexp-opt '("=" "+=" "-=" "*=" "/=" "%=" "//=" "**=" "&=" "|=" "^=" ">>=" "<<=" ":="
-				     "and" "not" "or" "is" "is not" "in" "not in"
-				     "&" "|" "^" "~" "<<" ">>"
-				     "==" ">=" "<=" "!=" ">" "<"
-				     "+" "-" "*" "/" "%" "**" "//"))
-		       (treesit-node-text node t))))))))
+	 ;; Or an operator (having to specifically exclude "in" in for-statements)
+	 (and (string-match (regexp-opt '("=" "+=" "-=" "*=" "/=" "%=" "//=" "**=" "&=" "|=" "^=" ">>=" "<<=" ":="
+					  "and" "not" "or" "is" "is not" "in" "not in"
+					  "&" "|" "^" "~" "<<" ">>"
+					  "==" ">=" "<=" "!=" ">" "<"
+					  "+" "-" "*" "/" "%" "**" "//")
+					'symbols)
+			    (treesit-node-text node t))
+	      (not (cerberus--node-is-thing-p (treesit-node-parent node) "^for_statement$")))))))))
 
 
 

@@ -57,7 +57,7 @@
       (insert text)
       (when track
 	(when (>= tstart position) (setq tstart (+ tstart diff)))
-	(when (>= tend position) (setq tend (+ tend diff)))
+	(when (> tend position) (setq tend (+ tend diff)))
 	(treesit-node-on tstart tend)))))
 
 (defun cerberus--rm-track (start end &optional track)

@@ -33,8 +33,13 @@
 ;; Defaults for other languages
 (setq cerberus-default-thing-settings
       `((cerberus-statement ,regexp-unmatchable) ; Statements must be swappable with eachother
-	(cerberus-condition ,regexp-unmatchable)
-	(cerberus-comment ,regexp-unmatchable)
+	
+	(cerberus-condition
+	 ,(lambda (node) (and (treesit-node-check node 'named)
+			 (equal "condition" (treesit-node-field-name node)))))
+	
+	(cerberus-comment ,(regexp-opt '("comment")))
+	
 	(cerberus-sentence
 	 ,(lambda (node) (save-mark-and-excursion
 		      (and (progn (goto-char (treesit-node-start node))

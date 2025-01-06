@@ -49,18 +49,24 @@
   (cl-intersection (mapcar #'treesit-node-type (cerberus--node-same-size-subtree a))
 		   (mapcar #'treesit-node-type (cerberus--node-same-size-subtree b))))
 
+(defun cerberus--node-alternatives (node)
+  "Return list of node types that could replace NODE"
+  ;; HACK We're just adding comment which seems to check out,
+  ;; but we actually want everything in ts extras.
+  ;; TODO add this in combobulate?
+  (cons
+   "comment"
+   (combobulate-procedure-expand-rules
+   `((rule ,(treesit-node-type (treesit-node-parent node))
+	   ,@(if-let ((field (treesit-node-field-name node)))
+		 (intern (concat ":" field))))))))
+
 (defun cerberus--node-swappable-p (a b)
-  "Return t if treesit nodes A and B may be swapped.
-This is determined to be possible if
-they or same-size children either are of the same type or statements,
-or if they are siblings and one is a comment"
-  (or (cerberus--node-match-p a b)
-      (cl-every
-       (lambda (n) (cerberus--node-is-thing-p n 'cerberus-statement))
-       (list a b))
-      (and (cerberus--node-eq-p (treesit-node-parent a) (treesit-node-parent b))
-	   (cl-some (lambda (n) (cerberus--node-is-thing-p n 'cerberus-comment))
-		    (list a b)))))
+  "Return non-nil if nodes A and B might be swapped"
+  (let ((a-alternatives (cerberus--node-alternatives a))
+	(b-alternatives (cerberus--node-alternatives b)))
+    (and (member (treesit-node-type a) b-alternatives)
+	 (member (treesit-node-type b) a-alternatives))))
 
 (defun cerberus--add-to-treesit-thing-settings (lang &optional default)
   (let* ((new-settings (cerberus--alist-get treesit-thing-settings lang)))

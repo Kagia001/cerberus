@@ -23,7 +23,10 @@
 ;;; Commentary:
 
 ;;; Code:
+(straight-use-package 'meow)
+(straight-use-package 'combobulate)
 
+(require 'combobulate)
 (require 'cerberus-vars)
 (require 'cerberus-core)
 (require 'cerberus-languages)
@@ -32,7 +35,6 @@
 (require 'cerberus-util)
 (require 'cerberus-interactive)
 
-(straight-use-package 'meow)
-(straight-use-package 'combobulate)
+
 
 (provide 'cerberus)

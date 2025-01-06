@@ -39,14 +39,18 @@
 			 (equal "condition" (treesit-node-field-name node)))))
 	
 	(cerberus-comment ,(regexp-opt '("comment")))
+
+	(cerberus-other-sentence ,regexp-unmatchable)
 	
 	(cerberus-sentence
-	 ,(lambda (node) (save-mark-and-excursion
-		      (and (progn (goto-char (treesit-node-start node))
-				  (eq (+ (current-indentation) (line-beginning-position))
-				      (treesit-node-start node)))
-			   (progn (goto-char (treesit-node-end node))
-				  (eq (line-end-position) (treesit-node-end node)))))))
+	 (or
+	  cerberus-comment
+	  cerberus-condition
+	  cerberus-statement
+	  cerberus-other-sentence
+	  (not (or (not cerberus--node-spans-line-p) ; !(!a v !b) = ab
+		   (not ,(lambda (n) (treesit-node-check n 'named)))))))
+	
 	(cerberus-word
 	 ,(lambda (node) (and (zerop (cerberus--node-smaller-child-count node t))
 			 (treesit-node-check node 'named))))

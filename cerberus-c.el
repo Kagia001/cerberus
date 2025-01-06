@@ -29,41 +29,37 @@
 (cerberus-lang-def-things
  'c
  `((cerberus-statement
-    ,(regexp-opt '("attributed_statement"
-		   "break_statement"
-		   "case_statement"
-		   "comment"
-		   "continue_statement"
-		   "do_statement"
-		   "declaration"
-		   "expression_statement"
-		   "for_statement"
-		   "goto_statement"
-		   "if_statement"
-		   "labeled_statement"
-		   "preproc_def"
-		   "preproc_include"
-		   "return_statement"
-		   "switch_statement"
-		   "while_statement")
-		 'symbols))
+    (,(regexp-opt '("attributed_statement"
+		    "break_statement"
+		    "case_statement"
+		    "comment"
+		    "continue_statement"
+		    "do_statement"
+		    "declaration"
+		    "expression_statement"
+		    "for_statement"
+		    "goto_statement"
+		    "if_statement"
+		    "labeled_statement"
+		    "preproc_def"
+		    "preproc_include"
+		    "return_statement"
+		    "switch_statement"
+		    "while_statement")
+		  'symbols)
+    .
+    ;; Dont include [else if] if-statements
+    ,(lambda (node) (not (and (cerberus--node-is-thing-p (treesit-node-parent node) "^else_clause$")
+			 (cerberus--node-is-thing-p node "^if_statement$"))))))
+   
    (cerberus-condition
     ,(lambda (node) (and (treesit-node-check node 'named)
-		    (equal "condition" (treesit-node-field-name (treesit-node-parent node))))))
-   (cerberus-comment
-    ,(regexp-opt '("comment")))
-   
-   (cerberus-sentence
-    (or cerberus-statement
-	cerberus-condition
-	cerberus-comment
-	(,(regexp-opt '("function_definition"
-			"else_clause")
-		      'symbols)
-	 .
-	 ;; Dont include [else if] if-statements
-	 ,(lambda (node) (not (and (cerberus--node-is-thing-p (treesit-node-parent node) "^else_clause$")
-			      (cerberus--node-is-thing-p node "^if_statement$")))))))
+		    (equal "condition" (treesit-node-field-name (treesit-node-parent node)))
+		    (not (cerberus--node-is-thing-p (treesit-node-parent (treesit-node-parent node)) "^for_statement$")))))
+
+   (cerberus-other-sentence ,(regexp-opt '("function_definition"
+				   "else_clause")
+				 'symbols))
 
    (cerberus-word
     ,(lambda (node)

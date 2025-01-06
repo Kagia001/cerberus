@@ -207,4 +207,12 @@ we go back from starting point or fwd from end point and find the next matching 
 (defun cerberus--node-only-child-p (node &optional named)
   (eq 1 (treesit-node-child-count (treesit-node-parent node) named)))
 
+(defun cerberus--node-spans-line-p (node)
+  (save-mark-and-excursion
+    (and (progn (goto-char (treesit-node-start node))
+		(eq (+ (current-indentation) (line-beginning-position))
+		    (treesit-node-start node)))
+	 (progn (goto-char (treesit-node-end node))
+		(eq (line-end-position) (treesit-node-end node))))))
+
 (provide 'cerberus-treesit)

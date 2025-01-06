@@ -30,16 +30,10 @@
  'python
  `((cerberus-statement
     ,(regexp-opt '("statement")))
-   (cerberus-comment
-    ,(regexp-opt '("comment")))
-   (cerberus-sentence
-    (or cerberus-statement
-	cerberus-comment
-	cerberus-condition
-	,(regexp-opt '("else_clause"
+
+   (cerberus-other-sentence ,(regexp-opt '("else_clause"
 		       "except_clause"
-		       "comment"
-		       "definition"))))
+		       "definition")))
    
    (cerberus-nontrailing-list
     ,(regexp-opt '("argument_list"

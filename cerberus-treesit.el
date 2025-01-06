@@ -57,9 +57,9 @@
   (cons
    "comment"
    (combobulate-procedure-expand-rules
-   `((rule ,(treesit-node-type (treesit-node-parent node))
-	   ,@(if-let ((field (treesit-node-field-name node)))
-		 (intern (concat ":" field))))))))
+    `((rule ,(treesit-node-type (treesit-node-parent node))
+	    ,@(if-let ((field (treesit-node-field-name node)))
+		  (intern (concat ":" field))))))))
 
 (defun cerberus--node-swappable-p (a b)
   "Return non-nil if nodes A and B might be swapped"
@@ -216,9 +216,14 @@ we go back from starting point or fwd from end point and find the next matching 
 (defun cerberus--node-spans-line-p (node)
   (save-mark-and-excursion
     (and (progn (goto-char (treesit-node-start node))
-		(eq (+ (current-indentation) (line-beginning-position))
-		    (treesit-node-start node)))
-	 (progn (goto-char (treesit-node-end node))
-		(eq (line-end-position) (treesit-node-end node))))))
+		(back-to-indentation)
+		(eq (point) (treesit-node-start node)))
+	 (or (progn (goto-char (treesit-node-end node))
+		    (eolp))
+	     (and (if-let ((sib (treesit-node-next-sibling node)))
+		      (unless (treesit-node-check sib 'named)
+			(goto-char (treesit-node-end sib))
+			(eolp)))
+		  (not (cerberus--node-spans-line-p (treesit-node-parent node))))))))
 
 (provide 'cerberus-treesit)

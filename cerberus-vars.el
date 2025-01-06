@@ -109,6 +109,7 @@
 (defvar cerberus--user-override-keymaps nil)
 (make-variable-buffer-local 'cerberus--user-override-keymaps)
 
-
+(defvar cerberus-use-motion-modes '(special-mode dired-mode)
+  "List of major-modes where Cerberus defaults to the motion state")
 
 (provide 'cerberus-vars)

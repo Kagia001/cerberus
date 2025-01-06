@@ -73,7 +73,7 @@
 		     cerberus--user-override-keymaps))
     (add-to-list 'emulation-mode-map-alists element))
   
-  (if (derived-mode-p 'special-mode)
+  (if (derived-mode-p cerberus-use-motion-modes)
       (cerberus-motion-mode)
     (cerberus-normal-mode))
   

@@ -64,7 +64,7 @@
   "c" #'cerberus-change
   "d" #'kill-region
   "v" #'ignore
-  "/" #'ignore
+  "/" #'consult-line
   "k" #'ignore
   "h" #'ignore
   "," #'ignore
@@ -78,8 +78,8 @@
 
 (defvar-keymap cerberus-default-insert-keymap
   :doc "Keymap for Cerberus' insert mode"
-  "TAB" #'completion-at-point
-  "ESC" #'cerberus-normal-mode)
+  "<tab>" #'completion-at-point
+  "<escape>" #'cerberus-normal-mode)
 
 (defvar-keymap cerberus-ts-normal-keymap
   :doc "Keymap for Cerberus' normal mode when treesit is active"

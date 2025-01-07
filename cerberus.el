@@ -27,6 +27,8 @@
 (straight-use-package 'combobulate)
 
 (require 'combobulate)
+(require 'meow)
+
 (require 'cerberus-vars)
 (require 'cerberus-core)
 (require 'cerberus-languages)

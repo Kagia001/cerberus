@@ -105,9 +105,16 @@
 
 (defun cerberus-open-below ()
   (interactive)
+  (end-of-line)
   (cerberus-append)
-  (newline nil t)
-  ())
+  (newline nil t))
+
+(defun cerberus-open-above ()
+  (interactive)
+  (beginning-of-line)
+  (backward-char)
+  (cerberus-insert)
+  (newline nil t))
 
 (defun cerberus-delete ()
   (interactive)

@@ -179,7 +179,7 @@
 			 (not (cerberus--node-eq-p new-node node)))))
       (setq new-node
 	    (seq-find
-	     #'identity
+	     (lambda (n) (and n (not (string-empty-p (treesit-node-text n 't)))))
 	     (list (treesit-node-child new-node 0)
 		   (treesit-node-next-sibling new-node)
 		   (treesit-node-next-sibling (treesit-parent-until new-node (lambda (n) (when (treesit-node-next-sibling n)))))))))
@@ -214,16 +214,27 @@ we go back from starting point or fwd from end point and find the next matching 
   (eq 1 (treesit-node-child-count (treesit-node-parent node) named)))
 
 (defun cerberus--node-spans-line-p (node)
-  (save-mark-and-excursion
-    (and (progn (goto-char (treesit-node-start node))
-		(back-to-indentation)
-		(eq (point) (treesit-node-start node)))
-	 (or (progn (goto-char (treesit-node-end node))
-		    (eolp))
-	     (and (if-let ((sib (treesit-node-next-sibling node)))
-		      (unless (treesit-node-check sib 'named)
-			(goto-char (treesit-node-end sib))
-			(eolp)))
-		  (not (cerberus--node-spans-line-p (treesit-node-parent node))))))))
+  (unless (null node)
+    (save-mark-and-excursion
+      (and (progn (goto-char (treesit-node-start node))
+		  (back-to-indentation)
+		  (eq (point) (treesit-node-start node)))
+	   
+	   (or (progn (goto-char (treesit-node-end node))
+		      (eolp))
+	       (and (let ((flag 't)) 
+		      (while (not (eolp))
+			(let ((node (treesit-node-at (point))))
+			  (unless (and (not (treesit-node-check node 'named))
+				       (length= (treesit-node-text node) 1))
+			    (setq flag nil)))
+			(forward-char))
+		      flag)
+		    (not (and (cerberus--node-spans-line-p (treesit-node-parent node))
+			      (eq (treesit-node-start node) (treesit-node-start (treesit-node-parent node)))))))
+
+	   (or (null (treesit-node-prev-sibling node t))
+	       (null (treesit-node-parent (treesit-node-parent node)))
+	       (cerberus--node-spans-line-p (treesit-node-prev-sibling node t)))))))
 
 (provide 'cerberus-treesit)

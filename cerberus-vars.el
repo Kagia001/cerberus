@@ -26,7 +26,7 @@
 
 (defvar cerberus--thing-definitions nil "Thing settings for treesit things. See `treesit-thing-settings' for format")
 
-(defvar cerberus--major-mode-keymaps
+(defvar cerberus--major-mode-keymaps nil
   "Keymaps overriding default keymaps ")
 
 (defvar-keymap cerberus-default-normal-keymap
@@ -46,6 +46,7 @@
   "~" #'ignore
   
   "a" #'cerberus-insert
+  "A" #'cerberus-open-above
   "r" #'meow-replace
   "s" #'ignore
   "t" #'cerberus-append
@@ -78,7 +79,7 @@
 
 (defvar-keymap cerberus-default-insert-keymap
   :doc "Keymap for Cerberus' insert mode"
-  "<tab>" #'completion-at-point
+  ;; "<tab>" #'completion-at-point
   "<escape>" #'cerberus-normal-mode)
 
 (defvar-keymap cerberus-ts-normal-keymap
@@ -90,11 +91,15 @@
   "e" #'cerberus-sentence-prev
   "i" #'cerberus-down
 
+  "o" #'cerberus-up
+
   "f" #'cerberus-word-next
   "b" #'cerberus-word-prev
 
   "k" #'cerberus-next
   "h" #'cerberus-prev
+
+  "d" #'cerberus-delete
 
   "<up>" #'cerberus-move-node-up
   "<down>" #'cerberus-move-node-down)
@@ -110,7 +115,7 @@
 (defvar cerberus--user-override-keymaps nil)
 (make-variable-buffer-local 'cerberus--user-override-keymaps)
 
-(defvar cerberus-use-motion-modes '(special-mode dired-mode)
+(defvar cerberus-use-motion-modes '(special-mode dired-mode compilation-mode)
   "List of major-modes where Cerberus defaults to the motion state")
 
 (provide 'cerberus-vars)
